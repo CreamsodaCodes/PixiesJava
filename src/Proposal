@@ -1,0 +1,21 @@
+Ich plane, einen Evolutionssimulator zu schreiben.
+
+„Must-support“ Funktionen (ich verspreche, die folgenden zu haben):
+
+Kreaturen:
+
+Bewegung in alle vier Richtungen
+Asexuelle Reproduktion: Mitose
+Mutation des Genoms
+Simulation von Sinnesorganen: Tastsinn und Augen
+Neuronales Netzwerk als Gehirn
+Sonstiges:
+
+Darstellung jeder Kreatur als farbiges Quadrat auf dem Bildschirm (mit Swing)
+Automatisches Pflanzenwachstum, angepasst an die Anzahl der Kreaturen
+„Could-support“-Funktionen (ich könnte die folgenden umsetzen, wenn ich Zeit habe):
+
+Sexuelle Fortpflanzung
+Möglichkeit, dass die Kreaturen sich bekämpfen
+Fleisch als weitere Nahrungsquelle
+

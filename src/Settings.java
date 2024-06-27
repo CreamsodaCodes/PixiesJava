@@ -1,16 +1,16 @@
 public final class Settings {
-    static int girdLenght = 2500; //1000-5000 looks good atm
-    static int gridHeight = 2500;
+    static int girdLenght = 2000; //1000-5000 looks good atm
+    static int gridHeight = 2000;
     static int displayLenght = 500;
     static int displayHeight = 500;
-    static int waitTime = 0;
+    static int waitTime = 1;
     static int currentPlantCount = 0;
-    static int wantedPlantCount = 100000;
+    static int wantedPlantCount = 50000;
     static int currentCreatureCount = 0;
-    static int wantedCreatureCount = 2000;
-    static int maxCreatureCount = 20;
-    public final static int foodGainPerPlant = 400; //10
-    public final static int foodGainPerMeat = 20; //10
+    static int wantedCreatureCount = 300;
+    static int maxCreatureCount = 2000;
+    public final static int foodGainPerPlant = 300; //10
+    public final static int foodGainPerMeat = 200; //10
     public final static int mutationRate = 100; //0-1000
 
 

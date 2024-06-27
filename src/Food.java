@@ -9,7 +9,7 @@ public class Food {
         VisualManager.drawSquare(x,y,size, Color.RED);
     }
     public static void spawnAtRandomPos(int type){
-        int size = Pixies.random.nextInt(50)+1;
+        int size = Pixies.random.nextInt(40)+1;
         int x = Pixies.random.nextInt(Settings.getGirdLenght()-size-10) + 11;
         int y = Pixies.random.nextInt(Settings.getGridHeight()-size-10) + 11;
         if (VisualManager.isAreaWhite(x,y,size)&&type == 0) {

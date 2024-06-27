@@ -1,14 +1,8 @@
-import org.encog.Encog;
 import org.encog.engine.network.activation.*;
-import org.encog.ml.data.MLData;
-import org.encog.ml.data.MLDataSet;
-import org.encog.ml.data.basic.BasicMLData;
-import org.encog.ml.data.basic.BasicMLDataSet;
-import org.encog.ml.train.MLTrain;
-import org.encog.ml.train.strategy.RequiredImprovementStrategy;
+
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
-import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+
 
 import java.util.Random;
 
@@ -25,13 +19,21 @@ public class DJLBrain implements BrainInterface{
         this.network = new BasicNetwork();
         network.addLayer(new BasicLayer(null, true, inputSize));// Input layer with 2 neurons
 
-        network.addLayer(new BasicLayer(new ActivationReLU(), true, 20)); // Output layer with 1 neuron
-        network.addLayer(new BasicLayer(new ActivationReLU(), true, 30)); // Output layer with 1 neuron
+        for (int i = 0; i < networkStructur.length; i++) {
+            int nodes = networkStructur[i][0];
+            int activationFunctionType = networkStructur[i][1];
 
+            switchActivationFunction(activationFunctionType);
+            BasicLayer test = new BasicLayer(activationFunction, true, nodes);
+
+            network.addLayer(test);
+
+
+        }
 
         // Hidden layer with 3 neurons
         switchActivationFunction(networkStructur[networkStructur.length-1][1]);
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, outputSize)); // Output layer with 1 neuron
+        network.addLayer(new BasicLayer(activationFunction, false, outputSize)); // Output layer with 1 neuron
         network.getStructure().finalizeStructure();
         network.reset();
 

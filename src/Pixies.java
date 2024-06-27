@@ -18,7 +18,7 @@ public class Pixies extends Sprite{
     int currentFood;
     float herbavoir; //0-1
     static Random random = new Random();
-    static int additionalInputs = 7;
+    static int additionalInputs = 9;
     int nodesLayer1;
     int nodesLayer2;
 
@@ -39,8 +39,7 @@ public class Pixies extends Sprite{
         red=c.getRed();
         green=c.getGreen();
         blue=c.getBlue();
-        this.nodesLayer1=nodesLayer1;
-        this.nodesLayer2=nodesLayer2;
+
         this.spikes = spikes;
         this.originalSize = size;
         maxHealth = size * 10;
@@ -53,7 +52,7 @@ public class Pixies extends Sprite{
         this.possibleInteractions = Interactions.allInteractions;
         VisualManager.drawSquare(x,y,size,color);
 
-        inputModels = new InputModels[]{new TouchPlantsInputModel(this),new TouchMeatInputModel(this),new TouchCreatureInputModel(this),new ClockInputModel(this,100),new ClockInputModel(this,10),new ClockInputModel(this,2),new VisionPlantsInputModel(this,10,0),new VisionPlantsInputModel(this,10,1),new VisionPlantsInputModel(this,10,2),new VisionPlantsInputModel(this,10,3)};
+        inputModels = new InputModels[]{new TouchPlantsInputModel(this),new TouchMeatInputModel(this),new TouchCreatureInputModel(this),new ClockInputModel(this,100),new ClockInputModel(this,10),new ClockInputModel(this,2),new VisionPlantsInputModel(this,10,0),new VisionPlantsInputModel(this,10,1),new VisionPlantsInputModel(this,10,2),new VisionPlantsInputModel(this,10,3),new VisionMeatInputModel(this,10,0),new VisionMeatInputModel(this,10,1),new VisionMeatInputModel(this,10,2),new VisionMeatInputModel(this,10,3),new VisionCreatureEnemyInputModel(this,10,0),new VisionCreatureEnemyInputModel(this,10,1),new VisionCreatureEnemyInputModel(this,10,2),new VisionCreatureEnemyInputModel(this,10,3),new VisionCreatureFriendInputModel(this,10,0),new VisionCreatureFriendInputModel(this,10,1),new VisionCreatureFriendInputModel(this,10,2),new VisionCreatureFriendInputModel(this,10,3)};
         this.bonusActions = BonusActions.allBonusActions;
         int inputClaculation = 0;
         for (int i = 0; i <inputModels.length ; i++) {
@@ -121,6 +120,10 @@ public class Pixies extends Sprite{
         count++;
         inputData[count] =  (double) 1 /ypos; //10 = 1  max-10 = 0
         count++;
+        inputData[count] =  1f;
+        count++;
+        inputData[count] =  0f;
+        count++;
 
         for (int i = 0; i < inputModels.length; i++) {
             float[] arr = inputModels[i].createData();
@@ -161,9 +164,9 @@ public class Pixies extends Sprite{
         int alpha = 255;
         float herb =(float) ((random.nextInt(200)-100)*0.01);
         int spikes = random.nextInt(100);
-        int[][] NetworkStruct = new int[random.nextInt(10)+1][2];
+        int[][] NetworkStruct = new int[random.nextInt(3)+1][2];
         for (int i = 0; i < NetworkStruct.length; i++) {
-            NetworkStruct[i][0] = random.nextInt(100)+1;
+            NetworkStruct[i][0] = random.nextInt(50)+1;
             NetworkStruct[i][1] = random.nextInt(10);
         }
         int colour = new Color(red,green,blue,alpha).getRGB();
@@ -311,6 +314,10 @@ public class Pixies extends Sprite{
     }
 
     public void setCurrentHealth(int currentHealth) {
+        if (currentHealth < maxHealth) {
+            this.currentHealth = maxHealth;
+            return;
+        }
         this.currentHealth = currentHealth;
     }
 

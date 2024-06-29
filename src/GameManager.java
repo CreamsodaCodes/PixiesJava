@@ -67,6 +67,15 @@ public class GameManager {
             while (isRunning) {
                 keepCreaturessAtWanted();
                 keepPlantsAtWanted();
+                if (Settings.foodGainPerPlantMin < Settings.foodGainPerPlant && Settings.currentCreatureCount>Settings.wantedCreatureCount) {
+                    Settings.foodGainPerPlant--;
+                    System.out.println(Settings.foodGainPerPlant);
+                }
+                if (Settings.foodGainPerPlantMax > Settings.foodGainPerPlant && Settings.currentCreatureCount<Settings.wantedCreatureCount) {
+                    Settings.foodGainPerPlant++;
+                    System.out.println(Settings.foodGainPerPlant);
+                }
+
                 //Food.spawnAtRandomPos(0);
                 for (Pixies value : entitiyHashMap.values()) {
                     value.handleThinking();

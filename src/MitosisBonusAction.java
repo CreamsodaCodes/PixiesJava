@@ -67,7 +67,6 @@ public class MitosisBonusAction extends BonusActions{
             if (mutatedSize <10 || mutatedSize > 100) {
                 mutatedSize = me.getOriginalSize();
             }
-
         }
         else{
             mutatedSize = me.getOriginalSize();
@@ -98,7 +97,7 @@ public class MitosisBonusAction extends BonusActions{
         // InputModel Mutation
         if (newX > 0+10 && newY > 0+10 && newY+mutatedSize < Settings.getGridHeight()-10&& newX+mutatedSize < Settings.getGirdLenght()-10&&!GameManager.entitiyHashMap.containsKey(mutatedColorInt)&&VisualManager.isAreaWhite(newX,newY,mutatedSize)) {
             me.subCurrentFood(foodCost);
-            GameManager.entitiyHashMap.put(mutatedColorInt,new Pixies(mutatedColorInt,mutatedSize,newX,newY,me.inputModels,mutatedSpikes,mutatedHerbavoir,mutatedBrain));
+            GameManager.entitiyHashMap.put(mutatedColorInt,new Pixies(mutatedColorInt,mutatedSize,newX,newY,mutatedSpikes,mutatedHerbavoir,mutatedBrain,me.inputModelInt));
         }
 
 

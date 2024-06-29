@@ -11,9 +11,11 @@ public abstract class Sprite {
     int red;
     int green;
     int blue;
-
-
-
+    int whereInMovCircle = 1;
+    int maxDelay1 = 8;
+    int maxDelay2 = 15;
+    int maxDelay3 = 50;
+    int currentDely = 0;
     public int getXpos() {
         return xpos;
     }
@@ -49,8 +51,42 @@ public abstract class Sprite {
     Interactions currentInteraction;
 
     void handleMovement(int direction){
+
         if (isDead) {
             return;
+        }
+        if (direction == 9) {
+            if (whereInMovCircle == 9) {
+                whereInMovCircle = 1;
+            }
+            direction = whereInMovCircle;
+            if (currentDely > maxDelay1) {
+                currentDely = 0;
+                whereInMovCircle++;
+            }
+            currentDely++;
+        }
+        if (direction == 10) {
+            if (whereInMovCircle == 9) {
+                whereInMovCircle = 1;
+            }
+            direction = whereInMovCircle;
+            if (currentDely > maxDelay2) {
+                currentDely = 0;
+                whereInMovCircle++;
+            }
+            currentDely++;
+        }
+        if (direction == 11) {
+            if (whereInMovCircle == 9) {
+                whereInMovCircle = 1;
+            }
+            direction = whereInMovCircle;
+            if (currentDely > maxDelay3) {
+                currentDely = 0;
+                whereInMovCircle++;
+            }
+            currentDely++;
         }
         int[] movData = handleColisions(direction);
         if (movData == null) {
@@ -68,6 +104,7 @@ public abstract class Sprite {
 
         Set<Integer> colors = new HashSet<>();
         if (direction == 1) {
+
             //upwards
             for (int i = 0; i < length; i++) {
                 int currentCheck = VisualManager.gameBoard.getRGB(xpos + i, ypos + length);
@@ -239,8 +276,10 @@ public abstract class Sprite {
         }
 
         if (colors.isEmpty()) {
+            if (xpos>10&&ypos>10&&xpos+length<Settings.getGirdLenght()-10&&ypos+length<Settings.getGridHeight()-10) {
+                eat(plants,meat);
+            }
 
-            eat(plants,meat);
             return null;
         }
         return colors.stream().mapToInt(Integer::intValue).toArray();

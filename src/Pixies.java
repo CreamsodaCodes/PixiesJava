@@ -1,3 +1,5 @@
+import org.encog.engine.network.activation.*;
+
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Random;
@@ -18,9 +20,8 @@ public class Pixies extends Sprite{
     int currentFood;
     float herbavoir; //0-1
     static Random random = new Random();
-    static int additionalInputs = 9;
-    int nodesLayer1;
-    int nodesLayer2;
+    static int additionalInputs = 10;
+    int[] inputModelInt;
 
     Interactions[] possibleInteractions;
 
@@ -33,7 +34,7 @@ public class Pixies extends Sprite{
     double[] outputData;
 
     //test
-    Pixies(int color,int size,int x,int y,Interactions currentInteracrio,float herbavoir,int spikes,int[][] networkStruct){
+    Pixies(int color,int size,int x,int y,Interactions currentInteracrio,float herbavoir,int spikes,int[][] networkStruct,int[] inputModelInt){
         this.color = color; length = size; xpos = x; ypos = y;
         Color c = new Color(color);
         red=c.getRed();
@@ -51,15 +52,21 @@ public class Pixies extends Sprite{
         this.currentInteraction = currentInteracrio;
         this.possibleInteractions = Interactions.allInteractions;
         VisualManager.drawSquare(x,y,size,color);
+        this.inputModelInt = inputModelInt;
+        inputModels = new InputModels[inputModelInt.length];
+        for (int i = 0; i < inputModelInt.length; i++) {
+            inputModels[i]= switchInputModels(inputModelInt[i]);
+        }
 
-        inputModels = new InputModels[]{new TouchPlantsInputModel(this),new TouchMeatInputModel(this),new TouchCreatureInputModel(this),new ClockInputModel(this,100),new ClockInputModel(this,10),new ClockInputModel(this,2),new VisionPlantsInputModel(this,10,0),new VisionPlantsInputModel(this,10,1),new VisionPlantsInputModel(this,10,2),new VisionPlantsInputModel(this,10,3),new VisionMeatInputModel(this,10,0),new VisionMeatInputModel(this,10,1),new VisionMeatInputModel(this,10,2),new VisionMeatInputModel(this,10,3),new VisionCreatureEnemyInputModel(this,10,0),new VisionCreatureEnemyInputModel(this,10,1),new VisionCreatureEnemyInputModel(this,10,2),new VisionCreatureEnemyInputModel(this,10,3),new VisionCreatureFriendInputModel(this,10,0),new VisionCreatureFriendInputModel(this,10,1),new VisionCreatureFriendInputModel(this,10,2),new VisionCreatureFriendInputModel(this,10,3)};
         this.bonusActions = BonusActions.allBonusActions;
         int inputClaculation = 0;
         for (int i = 0; i <inputModels.length ; i++) {
             inputClaculation += inputModels[i].outputSize;
         }
         inputData = new double[inputClaculation+additionalInputs];
-        brain = new DJLBrain(9+possibleInteractions.length+bonusActions.length,inputClaculation+additionalInputs,networkStruct);
+       // brain = new NeatBrain(inputClaculation+additionalInputs,9+possibleInteractions.length+bonusActions.length);
+
+        brain = new DJLBrain(12+possibleInteractions.length+bonusActions.length,inputClaculation+additionalInputs,networkStruct);
 
         int inputModelCost = 0;
         for (InputModels inputModel : inputModels) {
@@ -71,17 +78,23 @@ public class Pixies extends Sprite{
 
     }
     // Evolution Constructor
-    Pixies(int color,int size,int x,int y,InputModels[] inputModels,int spikes,float herbavoir,BrainInterface brain){
+    Pixies(int color,int size,int x,int y,int spikes,float herbavoir,BrainInterface brain,int[] inputModelInt){
         isOffspring = true;
-        this.color = color; length = size;
-        xpos = x; ypos = y;
+        this.color = color;
+        length = size;
+        xpos = x;
+        ypos = y;
+        this.inputModelInt = inputModelInt;
         originalSize = size;
         maxHealth = size * 10;
         maxFood = size * 1000;
         currentHealth = maxHealth;
         currentFood = (int) (maxFood*0.5);
         this.herbavoir = herbavoir;
-        this.inputModels = inputModels;
+        inputModels = new InputModels[inputModelInt.length];
+        for (int i = 0; i < inputModelInt.length; i++) {
+            inputModels[i]= switchInputModels(inputModelInt[i]);
+        }
         moveCost = size;
         this.bonusActions = BonusActions.allBonusActions;
         this.possibleInteractions = Interactions.allInteractions;
@@ -92,12 +105,17 @@ public class Pixies extends Sprite{
         for (InputModels inputModel : inputModels) {
             inputModelCost += inputModel.outputSize;
         }
+        int inputClaculation = 0;
+        for (int i = 0; i <inputModels.length ; i++) {
+            inputClaculation += inputModels[i].outputSize;
+        }
+        inputData = new double[inputClaculation+additionalInputs];
         inputModelCost = (int) (inputModelCost*0.1);
         this.baseFoodConsumption = inputModelCost + size + spikes; //+ brainsize;
 
         VisualManager.drawSquare(x,y,size,color);
 
-        int inputClaculation = 0;
+         inputClaculation = 0;
         for (int i = 0; i <inputModels.length ; i++) {
             inputClaculation += inputModels[i].outputSize;
         }
@@ -164,6 +182,13 @@ public class Pixies extends Sprite{
         int alpha = 255;
         float herb =(float) ((random.nextInt(200)-100)*0.01);
         int spikes = random.nextInt(100);
+        int[] inputsModelsInt = new int[random.nextInt(10)];
+        for (int i = 0; i < inputsModelsInt.length; i++) {
+            inputsModelsInt[i] = random.nextInt(21)+1;
+        }
+
+
+
         int[][] NetworkStruct = new int[random.nextInt(3)+1][2];
         for (int i = 0; i < NetworkStruct.length; i++) {
             NetworkStruct[i][0] = random.nextInt(50)+1;
@@ -172,7 +197,7 @@ public class Pixies extends Sprite{
         int colour = new Color(red,green,blue,alpha).getRGB();
 
         if (!GameManager.entitiyHashMap.containsKey(colour)&&VisualManager.isAreaWhite(x,y,size)) {
-            GameManager.entitiyHashMap.put(colour,new Pixies(colour,size,x,y,new attackInteraction(),herb,spikes,NetworkStruct));
+            GameManager.entitiyHashMap.put(colour,new Pixies(colour,size,x,y,new attackInteraction(),herb,spikes,NetworkStruct,inputsModelsInt));
         }
 
     }
@@ -187,25 +212,25 @@ public class Pixies extends Sprite{
         //0-8 movement, 9-(9+amount of Interactions),(10+amount of Interactions)-(10+amount of Interactions+amountOfBonusActions)
         int currrentMovementMaxIndex = 0;
         double currentMovementMax = outputData[0];
-        for (int i = 1; i < 9; i++) {
+        for (int i = 1; i < 12; i++) {
             //0-8
             if (outputData[i] > currentMovementMax) {
                 currrentMovementMaxIndex = i;
                 currentMovementMax = outputData[i];
             }
         }
-        int currrentInteractionMaxIndex = 9;
-        double currentInteractiontMax = outputData[9];
-        for (int i = 10; i < 9+possibleInteractions.length; i++) {
+        int currrentInteractionMaxIndex = 12;
+        double currentInteractiontMax = outputData[12];
+        for (int i = 13; i < 12+possibleInteractions.length; i++) {
             if (outputData[i] > currentInteractiontMax) {
                 //9-10
                 currrentInteractionMaxIndex = i;
                 currentInteractiontMax = outputData[i];
             }
         }
-        int currrentBonusActionMaxIndex = 9+possibleInteractions.length;
+        int currrentBonusActionMaxIndex = 12+possibleInteractions.length;
         double currentBonusActionMax = outputData[currrentBonusActionMaxIndex];
-        for (int i = 10+possibleInteractions.length; i < 9+possibleInteractions.length+bonusActions.length; i++) {
+        for (int i = 13+possibleInteractions.length; i < 12+possibleInteractions.length+bonusActions.length; i++) {
             if (outputData[i] > currentBonusActionMax) {
                 //11-12
                 currrentBonusActionMaxIndex = i;
@@ -216,8 +241,8 @@ public class Pixies extends Sprite{
             subCurrentFood(moveCost);
         }
         handleMovement(currrentMovementMaxIndex);
-        currentInteraction = possibleInteractions[currrentInteractionMaxIndex-9];
-        bonusActions[currrentBonusActionMaxIndex-(9+possibleInteractions.length)].activate(this);
+        currentInteraction = possibleInteractions[currrentInteractionMaxIndex-12];
+        bonusActions[currrentBonusActionMaxIndex-(12+possibleInteractions.length)].activate(this);
 
     }
 
@@ -252,6 +277,16 @@ public class Pixies extends Sprite{
             }
             VisualManager.drawSquare(this.xpos,this.ypos,meatSize, Color.RED);
         }
+        else {
+            int meatSize;
+            if (0.05 * getCurrentFood()<length) {
+                meatSize = (int) (0.01 * getCurrentFood());
+            }
+            else{
+                meatSize = length;
+            }
+            VisualManager.drawSquare(this.xpos,this.ypos,meatSize, Color.RED);
+        }
 
 
 
@@ -263,7 +298,6 @@ public class Pixies extends Sprite{
             die();
             return;
         }
-
         setCurrentHealth(currentHealth-amount);
     }
 
@@ -314,7 +348,7 @@ public class Pixies extends Sprite{
     }
 
     public void setCurrentHealth(int currentHealth) {
-        if (currentHealth < maxHealth) {
+        if (currentHealth > maxHealth) {
             this.currentHealth = maxHealth;
             return;
         }
@@ -338,6 +372,7 @@ public class Pixies extends Sprite{
     }
     public void subCurrentFood(int amount) {
         if (amount >= currentFood) {
+            currentFood = 0;
             die();
             return;
         }
@@ -350,6 +385,75 @@ public class Pixies extends Sprite{
 
     public void setHerbavoir(float herbavoir) {
         this.herbavoir = herbavoir;
+    }
+
+    public InputModels switchInputModels(int InputInt){
+        switch (InputInt) {
+            case 1:
+                return new VisionCreatureFriendInputModel(this,10,0);
+
+            case 2:
+                return new VisionCreatureFriendInputModel(this,10,1);
+
+            case 3:
+                return new VisionCreatureFriendInputModel(this,10,2);
+
+            case 4:
+                return new VisionCreatureFriendInputModel(this,10,3);
+
+            case 5:
+                return new VisionCreatureEnemyInputModel(this,10,0);
+
+            case 6:
+                return new VisionCreatureEnemyInputModel(this,10,1);
+
+            case 7:
+                return new VisionCreatureEnemyInputModel(this,10,2);
+
+            case 8:
+                return new VisionCreatureEnemyInputModel(this,10,3);
+
+            case 9:
+                return new VisionPlantsInputModel(this,10,0);
+
+            case 10:
+                return new VisionPlantsInputModel(this,10,1);
+
+            case 11:
+                return new VisionPlantsInputModel(this,10,2);
+
+            case 12:
+                return new VisionPlantsInputModel(this,10,3);
+
+            case 13:
+                return new VisionMeatInputModel(this,10,0);
+
+            case 14:
+                return new VisionMeatInputModel(this,10,1);
+
+            case 15:
+                return new VisionMeatInputModel(this,10,2);
+
+            case 16:
+                return new VisionMeatInputModel(this,10,3);
+
+            case 17:
+                return new TouchCreatureInputModel(this);
+
+            case 18:
+                return new TouchMeatInputModel(this);
+
+            case 19:
+                return new TouchPlantsInputModel(this);
+
+            case 20:
+                return new ClockInputModel(this,2);
+            case 21:
+                return new ClockInputModel(this,40);
+            default:
+                return new ClockInputModel(this,20);
+        }
+
     }
 
 

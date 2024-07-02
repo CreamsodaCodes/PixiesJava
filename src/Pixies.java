@@ -10,7 +10,8 @@ public class Pixies extends Sprite{
     boolean isOffspring = false;
     int baseFoodConsumption;
     int originalSize;
-
+    int liveTimer = 0;
+    int liveTimeRepCount = 1000;
 
     int moveCost;
     int spikes = 1;
@@ -43,11 +44,11 @@ public class Pixies extends Sprite{
 
         this.spikes = spikes;
         this.originalSize = size;
-        maxHealth = size * 10;
+        maxHealth = size * 20;
         currentHealth = maxHealth;
-        maxFood = size * 1000; //100
+        maxFood = size * 1500; //100
         moveCost = size;
-        currentFood = maxFood;
+        currentFood = (int) (maxFood*0.5);
         this.herbavoir = herbavoir;
         this.currentInteraction = currentInteracrio;
         this.possibleInteractions = Interactions.allInteractions;
@@ -86,8 +87,8 @@ public class Pixies extends Sprite{
         ypos = y;
         this.inputModelInt = inputModelInt;
         originalSize = size;
-        maxHealth = size * 10;
-        maxFood = size * 1000;
+        maxHealth = size * 20;
+        maxFood = size * 1500;
         currentHealth = maxHealth;
         currentFood = (int) (maxFood*0.5);
         this.herbavoir = herbavoir;
@@ -181,7 +182,7 @@ public class Pixies extends Sprite{
         int blue = random.nextInt(254);// blue maybe for smell
         int alpha = 255;
         float herb =(float) ((random.nextInt(200)-100)*0.01);
-        int spikes = random.nextInt(100);
+        int spikes = random.nextInt(10);
         int[] inputsModelsInt = new int[random.nextInt(10)];
         for (int i = 0; i < inputsModelsInt.length; i++) {
             inputsModelsInt[i] = random.nextInt(21)+1;
@@ -203,6 +204,15 @@ public class Pixies extends Sprite{
     }
 
     void handleThinking(){
+        liveTimer++;
+        if (liveTimer == liveTimeRepCount) {
+            liveTimer =0;
+            BonusActions.allBonusActions[1].activate(this);
+            System.out.println("baby");
+        }
+        if (currentFood <= maxFood*0.1) {
+            brain.mutatedWeights(0.01);
+        }
         handleFoodConsumption();
         handleAllInputModels();
         outputData = brain.compute(inputData);

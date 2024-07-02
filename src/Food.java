@@ -17,5 +17,15 @@ public class Food {
             drawPlant(x,y,size);
         }
 
+
+    }
+    public static void spawnAtRandomPosSmall(int type) {
+        int size = Pixies.random.nextInt(10) + 1;
+        int x = Pixies.random.nextInt(Settings.getGirdLenght() - size - 10) + 11;
+        int y = Pixies.random.nextInt(Settings.getGridHeight() - size - 10) + 11;
+        if (VisualManager.isAreaWhite(x, y, size) && type == 0) {
+
+            drawPlant(x, y, size);
+        }
     }
 }

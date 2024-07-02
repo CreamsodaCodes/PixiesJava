@@ -4,14 +4,27 @@ public class MitosisBonusAction extends BonusActions{
     static Random random = new Random();
     int foodCost;
     @Override
-    void activate(Pixies me) {
+     void activate(Pixies me) {
         if (Settings.currentCreatureCount >= Settings.maxCreatureCount) {
             return;
         }
-        foodCost = (int)(me.maxFood*0.5);
+        foodCost = (int)(me.maxFood*0.4);
+        if (foodCost*1.5 >= me.currentFood) {
+            return;
+        }
+        me.subCurrentFood(foodCost);
+        mutate(me);
+
+    }
+    void activate(Pixies me,boolean cheap) {
+        if (Settings.currentCreatureCount >= Settings.maxCreatureCount) {
+            return;
+        }
+        foodCost = (int)(me.maxFood*0.1);
         if (foodCost >= me.currentFood-10) {
             return;
         }
+        me.subCurrentFood(foodCost);
         mutate(me);
 
     }
@@ -89,14 +102,14 @@ public class MitosisBonusAction extends BonusActions{
 
         }
         else{
-            mutatedBrain = me.brain;
+            mutatedBrain = me.brain.copy();
         }
         int newX = me.getXpos()+ (random.nextInt(40)+mutatedSize) * (random.nextBoolean() ? 1 : -1);
         int newY = me.getYpos()+ (random.nextInt(40)+mutatedSize) * (random.nextBoolean() ? 1 : -1);
 
         // InputModel Mutation
         if (newX > 0+10 && newY > 0+10 && newY+mutatedSize < Settings.getGridHeight()-10&& newX+mutatedSize < Settings.getGirdLenght()-10&&!GameManager.entitiyHashMap.containsKey(mutatedColorInt)&&VisualManager.isAreaWhite(newX,newY,mutatedSize)) {
-            me.subCurrentFood(foodCost);
+
             GameManager.entitiyHashMap.put(mutatedColorInt,new Pixies(mutatedColorInt,mutatedSize,newX,newY,mutatedSpikes,mutatedHerbavoir,mutatedBrain,me.inputModelInt));
         }
 

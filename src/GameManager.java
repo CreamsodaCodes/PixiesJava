@@ -63,23 +63,26 @@ public class GameManager {
 
         // initialise the thread
         gameLoop = new Thread(() -> {
+
             // while the game "is running" and the isRunning boolean is set to true, loop forever
             while (isRunning) {
+
                 keepCreaturessAtWanted();
                 keepPlantsAtWanted();
                 if (Settings.foodGainPerPlantMin < Settings.foodGainPerPlant && Settings.currentCreatureCount>Settings.wantedCreatureCount) {
                     Settings.foodGainPerPlant--;
-                    System.out.println(Settings.foodGainPerPlant);
                 }
                 if (Settings.foodGainPerPlantMax > Settings.foodGainPerPlant && Settings.currentCreatureCount<Settings.wantedCreatureCount) {
                     Settings.foodGainPerPlant++;
-                    System.out.println(Settings.foodGainPerPlant);
                 }
 
                 //Food.spawnAtRandomPos(0);
+
+
                 for (Pixies value : entitiyHashMap.values()) {
                     value.handleThinking();
                 }
+
                 //gameLogic() (operations on bufferedImage)
                 try {
                     sleep(Settings.getWaitTime());
@@ -93,6 +96,7 @@ public class GameManager {
     static void keepPlantsAtWanted(){
         if (Settings.wantedPlantCount > Settings.currentPlantCount) {
             Food.spawnAtRandomPos(0);
+            Food.spawnAtRandomPosSmall(0);
         }
     }
     static void keepCreaturessAtWanted(){

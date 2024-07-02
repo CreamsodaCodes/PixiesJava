@@ -6,6 +6,6 @@ public abstract class Interactions {
         for (int colour : colours) {
             handel(colour, me);
         }
-    }//new DoNothingInteraction()
-    public static Interactions[] allInteractions = {new attackInteraction(),new DoNothingInteraction()};
+    }//new DoNothingInteraction()new attackInteraction()
+    public static Interactions[] allInteractions = {new DoNothingInteraction()};
 }
